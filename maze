@@ -1,0 +1,63 @@
+const mazeLayout = [
+  ["P", "", "W", "", ""],
+  ["W", "", "W", "", "W"],
+  ["", "", "", "", "W"],
+  ["W", "W", "W", "", ""],
+  ["", "", "", "W", "G"]
+];
+
+const maze = document.getElementById("maze");
+const message = document.getElementById("message");
+
+let playerPos = { row: 0, col: 0 };
+
+function drawMaze() {
+  maze.innerHTML = "";
+
+  mazeLayout.forEach((row, r) => {
+    row.forEach((cell, c) => {
+      const div = document.createElement("div");
+      div.classList.add("cell");
+
+      if (cell === "W") div.classList.add("wall");
+      if (cell === "G") div.classList.add("goal");
+      if (r === playerPos.row && c === playerPos.col) {
+        div.classList.add("player");
+      }
+
+      maze.appendChild(div);
+    });
+  });
+}
+
+function movePlayer(rowChange, colChange) {
+  const newRow = playerPos.row + rowChange;
+  const newCol = playerPos.col + colChange;
+
+  if (
+    newRow < 0 ||
+    newRow >= mazeLayout.length ||
+    newCol < 0 ||
+    newCol >= mazeLayout[0].length
+  ) return;
+
+  if (mazeLayout[newRow][newCol] === "W") return;
+
+  playerPos.row = newRow;
+  playerPos.col = newCol;
+
+  if (mazeLayout[newRow][newCol] === "G") {
+    message.textContent = "🎉 You Win!";
+  }
+
+  drawMaze();
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowUp") movePlayer(-1, 0);
+  if (e.key === "ArrowDown") movePlayer(1, 0);
+  if (e.key === "ArrowLeft") movePlayer(0, -1);
+  if (e.key === "ArrowRight") movePlayer(0, 1);
+});
+
+drawMaze();
